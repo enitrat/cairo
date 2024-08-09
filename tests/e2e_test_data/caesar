@@ -1,0 +1,29 @@
+//! > caesar
+
+//! > test_runner_name
+SmallE2ETestRunner
+
+//! > cairo
+fn foo() -> felt252 {
+    caesar('hello world')
+}
+
+//! > casm
+[ap + 0] = 129848244432096040924311399, ap++;
+ret;
+
+//! > function_costs
+test::foo: OrderedHashMap({Const: 100})
+
+//! > sierra_code
+type felt252 = felt252 [storable: true, drop: true, dup: true, zero_sized: false];
+type Const<felt252, 129848244432096040924311399> = Const<felt252, 129848244432096040924311399> [storable: false, drop: false, dup: false, zero_sized: false];
+
+libfunc const_as_immediate<Const<felt252, 129848244432096040924311399>> = const_as_immediate<Const<felt252, 129848244432096040924311399>>;
+libfunc store_temp<felt252> = store_temp<felt252>;
+
+const_as_immediate<Const<felt252, 129848244432096040924311399>>() -> ([0]); // 0
+store_temp<felt252>([0]) -> ([0]); // 1
+return([0]); // 2
+
+test::foo@0() -> (felt252);

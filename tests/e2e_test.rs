@@ -42,6 +42,7 @@ cairo_lang_test_utils::test_file_test_with_runner!(
     "e2e_test_data",
     {
         cmp: "cmp",
+        caesar: "caesar"
     },
     SmallE2ETestRunner
 );

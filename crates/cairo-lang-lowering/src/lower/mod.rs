@@ -879,8 +879,26 @@ fn lower_expr(
         semantic::Expr::Missing(semantic::ExprMissing { diag_added, .. }) => {
             Err(LoweringFlowError::Failed(*diag_added))
         }
-        semantic::Expr::ExprCaesar(_) => todo!(),
+        semantic::Expr::ExprCaesar(expr) => lower_expr_caesar(ctx, &expr, builder),
     }
+}
+
+fn lower_expr_caesar(
+    ctx: &mut LoweringContext<'_, '_>,
+    expr: &semantic::ExprCaesar,
+    builder: &mut BlockBuilder,
+) -> LoweringResult<LoweredExpr> {
+    log::trace!("Lowering a caesar expression: {:?}", expr.debug(&ctx.expr_formatter));
+    let encyrpted = caesar(&expr.value);
+    lower_expr_literal_helper(ctx, expr.stable_ptr.untyped(), expr.ty, &encyrpted, builder)
+}
+
+fn caesar(secret: &BigInt) -> BigInt {
+    let (sign, mut bytes) = secret.to_bytes_be();
+    for byte in &mut bytes {
+        *byte = byte.wrapping_add(3);
+    }
+    BigInt::from_bytes_be(sign, &bytes)
 }
 
 fn lower_expr_literal(

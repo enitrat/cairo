@@ -55,6 +55,7 @@ cairo_lang_test_utils::test_file_test!(
         strings :"strings",
         while_ :"while",
         for_ :"for",
+        caesar: "caesar"
     },
     test_function_lowering
 );
