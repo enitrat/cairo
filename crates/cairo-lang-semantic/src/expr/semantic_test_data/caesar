@@ -1,0 +1,19 @@
+//! > Test caesar
+
+//! > test_runner_name
+test_expr_semantics(expect_diagnostics: false)
+
+//! > function_body
+
+//! > expr_code
+caesar('hello world')
+
+//! > expected_semantics
+ExprCaesar(
+    ExprCaesar {
+        value: 126207244316550804821666916,
+        ty: core::felt252,
+    },
+)
+
+//! > expected_diagnostics

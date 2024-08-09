@@ -354,6 +354,7 @@ macro_rules! add_expr_rewrites {
         $crate::prune_single!(__identity_helper, ConstantId, $($exclude)*);
 
         $crate::prune_single!(__regular_helper, Expr, $($exclude)*);
+        $crate::prune_single!(__regular_helper, ExprCaesar, $($exclude)*);
         $crate::prune_single!(__regular_helper, ExprTuple, $($exclude)*);
         $crate::prune_single!(__regular_helper, ExprSnapshot, $($exclude)*);
         $crate::prune_single!(__regular_helper, ExprDesnap, $($exclude)*);

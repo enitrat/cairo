@@ -319,6 +319,7 @@ pub fn maybe_compute_expr_semantic(
 
     // TODO(spapini): When Expr holds the syntax pointer, add it here as well.
     match syntax {
+        ast::Expr::Caesar(expr) => compute_expr_caesar_semantic(ctx, expr),
         ast::Expr::Path(path) => resolve_expr_path(ctx, path),
         ast::Expr::Literal(literal_syntax) => {
             Ok(Expr::Literal(literal_to_semantic(ctx, literal_syntax)?))
@@ -2420,6 +2421,22 @@ fn short_string_to_semantic(
     let suffix = suffix.as_ref().map(SmolStr::as_str);
 
     new_literal_expr(ctx, suffix, value, short_string_syntax.stable_ptr().into())
+}
+
+/// Creates the semantic model of a short string from its AST.
+fn compute_expr_caesar_semantic(
+    ctx: &mut ComputationContext<'_>,
+    expr: &ast::ExprCaesar,
+) -> Maybe<Expr> {
+    let db = ctx.db;
+    let syntax_db = db.upcast();
+
+    let value_semantic = short_string_to_semantic(ctx, &expr.arg(syntax_db))?;
+    Ok(Expr::ExprCaesar(ExprCaesar {
+        value: value_semantic.value,
+        ty: value_semantic.ty,
+        stable_ptr: expr.stable_ptr().into(),
+    }))
 }
 
 /// Creates a new string literal expression.

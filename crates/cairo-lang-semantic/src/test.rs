@@ -31,3 +31,21 @@ fn test_resolve() {
         _ => panic!("Expected a free function"),
     };
 }
+
+#[test]
+fn test_resolve_caesar() {
+    let db_val = SemanticDatabaseForTesting::default();
+    let (test_module, _diagnostics) = setup_test_module(
+        &db_val,
+        indoc! {"
+            fn foo() { caesar('hello world'); }
+        "},
+    )
+    .split();
+
+    let module_id = test_module.module_id;
+    let db = &db_val;
+    assert!(db.module_item_by_name(module_id, "doesnt_exist".into()).unwrap().is_none());
+    let caesar = db.module_item_by_name(module_id, "caesar".into()).unwrap();
+    println!("{:?}", caesar);
+}

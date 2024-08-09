@@ -81,6 +81,7 @@ cairo_lang_test_utils::test_file_test!(
         tuple: "tuple",
         while_: "while",
         for_: "for",
+        caesar: "caesar",
     },
     test_expr_semantics
 );

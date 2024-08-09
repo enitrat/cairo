@@ -879,6 +879,7 @@ fn lower_expr(
         semantic::Expr::Missing(semantic::ExprMissing { diag_added, .. }) => {
             Err(LoweringFlowError::Failed(*diag_added))
         }
+        semantic::Expr::ExprCaesar(_) => todo!(),
     }
 }
 
