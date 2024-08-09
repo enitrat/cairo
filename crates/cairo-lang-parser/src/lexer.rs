@@ -182,6 +182,7 @@ impl<'a> Lexer<'a> {
         self.take_while(|c| c.is_ascii_alphanumeric() || c == '_');
 
         match self.peek_span_text() {
+            "caesar" => TokenKind::Caesar,
             "as" => TokenKind::As,
             "const" => TokenKind::Const,
             "false" => TokenKind::False,
@@ -338,6 +339,9 @@ impl Iterator for Lexer<'_> {
 enum TokenKind {
     Identifier,
 
+    // Caesar
+    Caesar,
+
     // Literals.
     LiteralNumber,
     ShortString,
@@ -428,6 +432,7 @@ enum TokenKind {
 
 fn token_kind_to_terminal_syntax_kind(kind: TokenKind) -> SyntaxKind {
     match kind {
+        TokenKind::Caesar => SyntaxKind::TerminalCaesar,
         TokenKind::As => SyntaxKind::TerminalAs,
         TokenKind::Const => SyntaxKind::TerminalConst,
         TokenKind::Identifier => SyntaxKind::TerminalIdentifier,

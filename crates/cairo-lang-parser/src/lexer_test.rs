@@ -39,6 +39,7 @@ fn terminal_kind_to_text(kind: SyntaxKind) -> Vec<&'static str> {
                 "\"12345678901234567890123456789012\"",
             ]
         }
+        SyntaxKind::TerminalCaesar => vec!["caesar"],
         SyntaxKind::TerminalFalse => vec!["false"],
         SyntaxKind::TerminalExtern => vec!["extern"],
         SyntaxKind::TerminalType => vec!["type"],
@@ -179,6 +180,7 @@ fn terminal_kinds() -> Vec<SyntaxKind> {
         SyntaxKind::TerminalEndOfFile,
         SyntaxKind::TerminalShortString,
         SyntaxKind::TerminalString,
+        SyntaxKind::TerminalCaesar,
     ]
 }
 
@@ -198,6 +200,9 @@ fn need_separator(
         return true;
     }
     if kind0 == SyntaxKind::TerminalLiteralNumber && (kind0 == kind1 || is_identifier_like(kind1)) {
+        return true;
+    }
+    if kind0 == SyntaxKind::TerminalCaesar || kind1 == SyntaxKind::TerminalCaesar {
         return true;
     }
     if kind0 == SyntaxKind::TerminalShortString
@@ -304,6 +309,10 @@ fn test_lex_double_token() {
 
                 let terminal = lexer.next().unwrap();
                 let token_text = terminal.text;
+                println!(
+                    "kind0, text0, kind1, text1, separator: {}, {}, {}, {}, {}",
+                    kind0, text0, kind1, text1, separator
+                );
                 assert_eq!(
                     terminal.kind, kind0,
                     "Wrong first token kind: {}, expected: {kind0}. Text: \"{token_text}\".",
@@ -361,6 +370,60 @@ fn test_lex_token_with_trivia() {
             }
         }
     }
+}
+
+#[test]
+fn test_caesar_expr() {
+    let db_val = SimpleParserDatabase::default();
+    let db = &db_val;
+    let text = "caesar('hello world');";
+    let mut lexer = Lexer::from_text(db, test_source(), text);
+    let terminal = lexer.next().unwrap();
+    assert_eq!(
+        terminal.kind,
+        SyntaxKind::TerminalCaesar,
+        "Wrong token kind, with text: \"{text}\".",
+    );
+    assert_eq!(terminal.text, "caesar", "Wrong token text.");
+
+    let terminal = lexer.next().unwrap();
+    assert_eq!(
+        terminal.kind,
+        SyntaxKind::TerminalLParen,
+        "Wrong token kind, with text: \"{text}\".",
+    );
+    assert_eq!(terminal.text, "(", "Wrong token text.");
+
+    let terminal = lexer.next().unwrap();
+    assert_eq!(
+        terminal.kind,
+        SyntaxKind::TerminalShortString,
+        "Wrong token kind, with text: \"{text}\".",
+    );
+    assert_eq!(terminal.text, "'hello world'", "Wrong token text.");
+
+    let terminal = lexer.next().unwrap();
+    assert_eq!(
+        terminal.kind,
+        SyntaxKind::TerminalRParen,
+        "Wrong token kind, with text: \"{text}\".",
+    );
+    assert_eq!(terminal.text, ")", "Wrong token text.");
+
+    let terminal = lexer.next().unwrap();
+    assert_eq!(
+        terminal.kind,
+        SyntaxKind::TerminalSemicolon,
+        "Wrong token kind, with text: \"{text}\".",
+    );
+    assert_eq!(terminal.text, ";", "Wrong token text.");
+
+    assert_eq!(
+        lexer.next().unwrap().kind,
+        SyntaxKind::TerminalEndOfFile,
+        "Wrong eof token, with text: \"{text}\"."
+    );
+    assert!(lexer.next().is_none(), "Expected end of lexer stream.");
 }
 
 #[test]

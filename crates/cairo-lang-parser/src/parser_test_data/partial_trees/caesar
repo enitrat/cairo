@@ -1,0 +1,90 @@
+//! > Test caesar expression simple
+
+//! > test_runner_name
+test_partial_parser_tree(expect_diagnostics: false)
+
+//! > cairo_code
+fn test() {
+    caesar ('hello world');
+}
+
+//! > top_level_kind
+ExprCaesar
+
+//! > ignored_kinds
+
+//! > expected_diagnostics
+
+//! > expected_tree
+└── Top level kind: ExprCaesar
+    ├── caesar (kind: TokenCaesar): 'caesar'
+    ├── lparen (kind: TokenLParen): '('
+    ├── arg (kind: TokenShortString): ''hello world''
+    └── rparen (kind: TokenRParen): ')'
+
+//! > ==========================================================================
+
+//! > Test caesar expression with multiple arguments
+
+//! > test_runner_name
+test_partial_parser_tree(expect_diagnostics: true)
+
+//! > cairo_code
+fn test() {
+    caesar('hello world', 1);
+}
+
+//! > top_level_kind
+
+//! > ignored_kinds
+
+//! > expected_diagnostics
+error: Missing token TerminalRParen.
+ --> dummy_file.cairo:2:25
+    caesar('hello world', 1);
+                        ^
+
+error: Skipped tokens. Expected: statement.
+ --> dummy_file.cairo:2:25
+    caesar('hello world', 1);
+                        ^
+
+error: Skipped tokens. Expected: statement.
+ --> dummy_file.cairo:2:28
+    caesar('hello world', 1);
+                           ^^
+
+//! > expected_tree
+└── root (kind: SyntaxFile)
+    ├── items (kind: ModuleItemList)
+    │   └── child #0 (kind: FunctionWithBody)
+    │       ├── attributes (kind: AttributeList) []
+    │       ├── visibility (kind: VisibilityDefault) []
+    │       ├── declaration (kind: FunctionDeclaration)
+    │       │   ├── function_kw (kind: TokenFunction): 'fn'
+    │       │   ├── name (kind: TokenIdentifier): 'test'
+    │       │   ├── generic_params (kind: OptionWrappedGenericParamListEmpty) []
+    │       │   └── signature (kind: FunctionSignature)
+    │       │       ├── lparen (kind: TokenLParen): '('
+    │       │       ├── parameters (kind: ParamList) []
+    │       │       ├── rparen (kind: TokenRParen): ')'
+    │       │       ├── ret_ty (kind: OptionReturnTypeClauseEmpty) []
+    │       │       ├── implicits_clause (kind: OptionImplicitsClauseEmpty) []
+    │       │       └── optional_no_panic (kind: OptionTerminalNoPanicEmpty) []
+    │       └── body (kind: ExprBlock)
+    │           ├── lbrace (kind: TokenLBrace): '{'
+    │           ├── statements (kind: StatementList)
+    │           │   ├── child #0 (kind: StatementExpr)
+    │           │   │   ├── attributes (kind: AttributeList) []
+    │           │   │   ├── expr (kind: ExprCaesar)
+    │           │   │   │   ├── caesar (kind: TokenCaesar): 'caesar'
+    │           │   │   │   ├── lparen (kind: TokenLParen): '('
+    │           │   │   │   ├── arg (kind: TokenShortString): ''hello world''
+    │           │   │   │   └── rparen: Missing
+    │           │   │   └── semicolon (kind: OptionTerminalSemicolonEmpty) []
+    │           │   └── child #1 (kind: StatementExpr)
+    │           │       ├── attributes (kind: AttributeList) []
+    │           │       ├── expr (kind: TokenLiteralNumber): '1'
+    │           │       └── semicolon (kind: OptionTerminalSemicolonEmpty) []
+    │           └── rbrace (kind: TokenRBrace): '}'
+    └── eof (kind: TokenEndOfFile).

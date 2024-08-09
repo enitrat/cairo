@@ -1202,7 +1202,7 @@ impl<'a> Parser<'a> {
             SyntaxKind::TerminalOrOr if lbrace_allowed == LbraceAllowed::Allow => {
                 Ok(self.expect_closure_expr_nullary().into())
             }
-
+            SyntaxKind::TerminalCaesar => Ok(self.expect_caesar_expr().into()),
             _ => {
                 // TODO(yuval): report to diagnostics.
                 Err(TryParseFailure::SkipToken)
@@ -1735,6 +1735,22 @@ impl<'a> Parser<'a> {
         let wrapper = self.take::<TerminalOrOr>().into();
         self.parse_closure_expr_body(wrapper)
     }
+
+
+    /// Assumes the current token is `caesar`.
+    /// Expected pattern: `caesar(<short string>)`.
+    fn expect_caesar_expr(&mut self) -> ExprCaesarGreen {
+        let caesar_kw = self.take::<TerminalCaesar>();
+        let lparen = self.parse_token::<TerminalLParen>();
+        let string = if self.peek().kind == SyntaxKind::TerminalShortString {
+            self.take_terminal_short_string()
+        } else {
+            self.create_and_report_missing_terminal::<TerminalShortString>()
+        };
+        let rparen = self.parse_token::<TerminalRParen>();
+        ExprCaesar::new_green(self.db, caesar_kw, lparen, string, rparen)
+    }
+
     fn parse_closure_expr_body(&mut self, wrapper: ClosureParamWrapperGreen) -> ExprClosureGreen {
         let mut block_required = self.peek().kind == SyntaxKind::TerminalArrow;
 
