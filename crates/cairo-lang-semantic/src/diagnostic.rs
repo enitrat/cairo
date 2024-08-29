@@ -891,7 +891,8 @@ impl DiagnosticEntry for SemanticDiagnostic {
             | SemanticDiagnosticKind::DeprecatedFeature { .. }
             | SemanticDiagnosticKind::UnusedImport { .. }
             | SemanticDiagnosticKind::CallingShadowedFunction { .. }
-            | SemanticDiagnosticKind::UnusedConstant => Severity::Warning,
+            | SemanticDiagnosticKind::UnusedConstant
+            | SemanticDiagnosticKind::ItemNotVisible { .. } => Severity::Warning,
             SemanticDiagnosticKind::PluginDiagnostic(diag) => diag.severity,
             _ => Severity::Error,
         }
