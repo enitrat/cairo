@@ -27,6 +27,8 @@ use crate::project::{ProjectConfig, get_main_crate_ids_from_project, setup_proje
 pub mod db;
 pub mod diagnostics;
 pub mod project;
+pub mod wasm_cairo_interface;
+
 
 #[cfg(test)]
 mod test;
