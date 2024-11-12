@@ -8,7 +8,7 @@ use cairo_lang_filesystem::db::{
     AsFilesGroupMut, CORELIB_VERSION, ExternalFiles, FilesDatabase, FilesGroup, FilesGroupEx,
     init_dev_corelib, init_files_group,
 };
-use cairo_lang_filesystem::detect::{detect_corelib, detect_dummy_corelib};
+use cairo_lang_filesystem::detect::detect_dummy_corelib;
 use cairo_lang_filesystem::flag::Flag;
 use cairo_lang_filesystem::ids::{CrateId, FlagId, VirtualFile};
 use cairo_lang_lowering::db::{LoweringDatabase, LoweringGroup, init_lowering_group};
