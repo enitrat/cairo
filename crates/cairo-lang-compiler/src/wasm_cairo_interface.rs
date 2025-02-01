@@ -81,7 +81,7 @@ pub fn setup_single_file_project_with_input_string(
         let canonical = path.canonicalize().map_err(|_| bad_path_err())?;
         let file_dir = canonical.parent().ok_or_else(bad_path_err)?;
         let crate_name = file_dir.to_str().ok_or_else(bad_path_err)?;
-        let crate_id = CrateLongId::name(crate_name.into()).intern(db);
+        let crate_id = CrateLongId::Real { name: crate_name.into(), discriminator: None }.intern(db);
         db.set_crate_config(
             crate_id,
             Some(CrateConfiguration::default_for_root(Directory::Real(file_dir.to_path_buf()))),
@@ -89,7 +89,7 @@ pub fn setup_single_file_project_with_input_string(
         Ok(crate_id)
     } else {
         // If file_stem is not lib, create a fake lib file.
-        let crate_id = CrateLongId::Real(file_stem.into()).intern(db);
+        let crate_id = CrateLongId::Real { name: file_stem.into(), discriminator: None }.intern(db);
         db.set_crate_config(
             crate_id,
             Some(CrateConfiguration::default_for_root(Directory::Real(path.parent().unwrap().to_path_buf()))),

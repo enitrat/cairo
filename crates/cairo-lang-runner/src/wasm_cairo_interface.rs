@@ -1,6 +1,6 @@
 use std::path::Path;
 use std::sync::Arc;
-use serde::Serializer;
+use cairo_lang_utils::Upcast;
 
 use anyhow::{Context, Error, Result};
 use cairo_lang_compiler::diagnostics::get_diagnostics_as_string;
@@ -13,7 +13,7 @@ use cairo_lang_filesystem::log_db::LogDatabase;
 use cairo_lang_sierra_generator::db::SierraGenGroup;
 use cairo_lang_sierra_generator::program_generator::SierraProgramWithDebug;
 use cairo_lang_sierra_generator::replace_ids::{DebugReplacer, SierraIdReplacer};
-use cairo_lang_starknet::contract::get_contracts_info;
+use cairo_lang_starknet::contract::{find_contracts, get_contracts_info};
 use cairo_lang_sierra::program::VersionedProgram;
 
 use crate::casm_run::format_next_item;
@@ -47,8 +47,8 @@ pub fn run_with_input_program_string(
         let err_string = get_diagnostics_as_string(db, &[]);
         anyhow::bail!("failed to compile:\n {}", err_string);
     }
-    
-    let SierraProgramWithDebug { program: mut sierra_program, debug_info } = Arc::unwrap_or_clone(
+
+    let SierraProgramWithDebug { program: mut sierra_program, debug_info: _ } = Arc::unwrap_or_clone(
         db.get_sierra_program(main_crate_ids.clone())
             .to_option()
             .with_context(|| "Compilation failed without any diagnostics.")?,
@@ -59,7 +59,8 @@ pub fn run_with_input_program_string(
         anyhow::bail!("Program requires gas counter, please provide `--available-gas` argument.");
     }
 
-    let contracts_info = get_contracts_info(db, main_crate_ids, &replacer)?;
+    let contracts = find_contracts((*db).upcast(), &main_crate_ids);
+    let contracts_info = get_contracts_info(db, contracts, &replacer)?;
     let sierra_program = replacer.apply(&sierra_program);
 
     let runner = SierraCasmRunner::new(
@@ -74,7 +75,7 @@ pub fn run_with_input_program_string(
     let result = runner
         .run_function_with_starknet_context(
             runner.find_function("::main").map_err(|err| Error::msg(err.to_string()))?,
-            &[],
+            vec![],
             available_gas,
             StarknetState::default(),
         )
@@ -127,7 +128,7 @@ pub fn run_with_sierra_json_string(
     let result = runner
         .run_function_with_starknet_context(
             runner.find_function("::main").map_err(|err| Error::msg(err.to_string()))?,
-            &[],
+            vec![],
             available_gas,
             StarknetState::default(),
         )

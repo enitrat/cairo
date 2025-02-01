@@ -6,7 +6,7 @@ use std::sync::Arc;
 use anyhow::{Context, Error, Ok};
 use cairo_lang_compiler::db::RootDatabase;
 use cairo_lang_compiler::diagnostics::DiagnosticsReporter;
-use cairo_lang_compiler::project::{check_compiler_path, setup_project};
+use cairo_lang_compiler::project::setup_project;
 use cairo_lang_diagnostics::ToOption;
 use cairo_lang_filesystem::cfg::{Cfg, CfgSet};
 use cairo_lang_runner::casm_run::format_next_item;

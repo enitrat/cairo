@@ -1,7 +1,7 @@
 use std::path::Path;
 use std::sync::Mutex;
 
-use anyhow::{bail, Error, Context, Result};
+use anyhow::{bail, Error, Result};
 use cairo_lang_compiler::db::RootDatabase;
 use cairo_lang_compiler::diagnostics::DiagnosticsReporter;
 use cairo_lang_compiler::project::setup_project;

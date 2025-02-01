@@ -87,7 +87,7 @@ ark-secp256r1 = "0.5.0"
 ark-std = "0.5.0"
 assert_matches = "1.5"
 bimap = "0.6.3"
-cairo-vm = { version = "1.0.2", features = ["mod_builtin"] }
+cairo-vm = { version = "1.0.1", features = ["mod_builtin"]}
 clap = { version = "4.5.27", features = ["derive"] }
 colored = "3.0.0"
 const-fnv1a-hash = "1.1.0"
@@ -105,7 +105,7 @@ ignore = "0.4.23"
 indent = "0.1.1"
 indexmap = { version = "2.7.1", default-features = false }
 indoc = "2.0.5"
-itertools = { version = "0.14.0", default-features = false }
+itertools = { version = "0.12.1", default-features = false }
 keccak = "0.1.5"
 lalrpop-util = { version = "0.22.1", features = ["lexer"] }
 log = "0.4.25"

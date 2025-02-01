@@ -1,11 +1,8 @@
-use std::f64::consts::E;
 use std::path::Path;
 use std::sync::Arc;
 
-use anyhow::{bail, Result};
-
+use anyhow::Result;
 use cairo_lang_compiler::db::RootDatabase;
-use cairo_lang_compiler::diagnostics::DiagnosticsReporter;
 use cairo_lang_compiler::wasm_cairo_interface::setup_project_with_input_string;
 use cairo_lang_filesystem::cfg::{Cfg, CfgSet};
 use cairo_lang_filesystem::db::FilesGroupEx;
@@ -44,6 +41,9 @@ impl TestRunner {
                 starknet,
                 add_statements_functions: config.run_profiler == RunProfilerConfig::Cairo,
                 add_statements_code_locations: false,
+                contract_declarations: None,
+                contract_crate_ids: None,
+                executable_crate_ids: None,
             },
         )?;
         Ok(Self { compiler, config })
@@ -82,7 +82,7 @@ impl TestCompiler {
         // WASM-Cairo interface
         let main_crate_ids =
             setup_project_with_input_string(db, Path::new(&path), input_program_string)?;
-        
+
         Ok(Self {
             db: db.snapshot(),
             test_crate_ids: main_crate_ids.clone(),
@@ -100,7 +100,7 @@ pub fn run_tests_with_input_string(
     include_ignored: bool,
     ignored: bool,
     starknet: bool,
-    run_profiler: String,
+    _run_profiler: String,
     gas_disabled: bool,
     print_resource_usage: bool,
 ) -> Result<Option<TestsSummary>> {
@@ -132,7 +132,7 @@ pub fn run_tests_with_input_string_parsed(
     include_ignored: bool,
     ignored: bool,
     starknet: bool,
-    run_profiler: String,
+    _run_profiler: String,
     gas_disabled: bool,
     print_resource_usage: bool,
 ) -> Result<String> {

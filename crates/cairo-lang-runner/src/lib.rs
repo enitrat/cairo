@@ -1,5 +1,4 @@
 //! Basic runner for running a Sierra program on the vm.
-use std::collections::HashSet;
 #[cfg(not(feature = "alloc"))]
 use std::collections::HashMap;
 
